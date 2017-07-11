@@ -1,97 +1,114 @@
-###############################################################################
-#  Copyright (c) 2014-2015 libbitcoin developers (see COPYING).
-#
-#         GENERATED SOURCE CODE, DO NOT EDIT EXCEPT EXPERIMENTALLY
-#
-###############################################################################
-sudo:
-    - false
+language: cpp
 
-language:
-    - cpp
-
-addons:
-    apt:
-        sources:
-            - boost-latest
-            - ubuntu-toolchain-r-test
-        packages:
-            - g++-4.8
+sudo: required
+dist: trusty
 
 matrix:
-    include:
-        - os: osx
-          compiler: clang
-          env: LINK=dynamic
-        - os: osx
-          compiler: clang
-          env: LINK=static
-        - os: linux
-          compiler: clang
-          env: LINK=dynamic
-          apt:
-            sources:
-                - sourceline: 'ppa:h-rayflood/llvm'
-            packages:
-                - clang-3.4
-        - os: linux
-          compiler: clang
-          env: LINK=static
-          apt:
-            sources:
-                - sourceline: 'ppa:h-rayflood/llvm'
-            packages:
-                - clang-3.4
-        - os: linux
-          compiler: gcc
-          env: LINK=dynamic
-          apt:
-        - os: linux
-          compiler: gcc
-          env: LINK=static
-          apt:
-            packages:
-                - lcov
-    fast_finish:
-        - true
+  include:
+    - os: linux
+      compiler: g++
+      addons:
+        apt:
+          sources:
+            - boost-latest
+            - travis-ci/sqlite3
+            - ubuntu-toolchain-r-test
+          packages:
+            - cmake
+            - cmake-data
+            - g++-5
+            - libboost1.58-all-dev
+            - libsqlite3-dev
+      env:
+        - CMAKE_BUILD_TYPE=DEBUG
+        - CMAKE_C_COMPILER=gcc-5
+        - CMAKE_CXX_COMPILER=g++-5
+
+    - os: linux
+      compiler: g++
+      addons:
+        apt:
+          sources:
+            - boost-latest
+            - travis-ci/sqlite3
+            - ubuntu-toolchain-r-test
+          packages:
+            - cmake
+            - cmake-data
+            - g++-5
+            - libboost1.58-all-dev
+            - libsqlite3-dev
+      env:
+        - CMAKE_BUILD_TYPE=RELEASE
+        - CMAKE_C_COMPILER=gcc-5
+        - CMAKE_CXX_COMPILER=g++-5
+
+    - os: linux
+      compiler: g++
+      addons:
+        apt:
+          sources:
+            - boost-latest
+            - travis-ci/sqlite3
+            - ubuntu-toolchain-r-test
+          packages:
+            - cmake
+            - cmake-data
+            - g++-6
+            - libboost1.58-all-dev
+            - libsqlite3-dev
+      env:
+        - CMAKE_BUILD_TYPE=DEBUG
+        - CMAKE_C_COMPILER=gcc-6
+        - CMAKE_CXX_COMPILER=g++-6
+
+    - os: linux
+      compiler: g++
+      addons:
+        apt:
+          sources:
+            - boost-latest
+            - travis-ci/sqlite3
+            - ubuntu-toolchain-r-test
+          packages:
+            - cmake
+            - cmake-data
+            - g++-6
+            - libboost1.55-all-dev
+            - libsqlite3-dev
+      env:
+        - CMAKE_BUILD_TYPE=RELEASE
+        - CMAKE_C_COMPILER=gcc-6
+        - CMAKE_CXX_COMPILER=g++-6
+
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang++
+      env:
+        - CMAKE_BUILD_TYPE=DEBUG
+        - CMAKE_C_COMPILER=clang-3.7
+        - CMAKE_CXX_COMPILER=clang++-3.7
+
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang++
+      env:
+        - CMAKE_BUILD_TYPE=RELEASE
+        - CMAKE_C_COMPILER=clang-3.7
+        - CMAKE_CXX_COMPILER=clang++-3.7
 
 before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      brew update;
+      brew install llvm37 sqlite3;
+      brew outdated boost || brew upgrade boost;
+    fi
 
-    # Set aliases for readability.
-    - if [[ $CC             == gcc     ]]; then GCC=true; fi
-    - if [[ $CC             == clang   ]]; then CLANG=true; fi
-    - if [[ $LINK           == static  ]]; then STATIC=true; fi
-    - if [[ $LINK           == dynamic ]]; then DYNAMIC=true; fi
-    - if [[ $TRAVIS_OS_NAME == osx     ]]; then OSX=true; fi
-    - if [[ $TRAVIS_OS_NAME == linux   ]]; then LINUX=true; fi
-
-install:
-
-    # Export CC/CXX to control gcc version.
-    - if [[ $GCC                         ]]; then export CC=gcc-4.8; export CXX=g++-4.8; fi
-
-    # Download and install packages.
-    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then brew unlink boost; brew install boost; fi
+before_script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} ..
 
 script:
-
-    # Download and build libbitcoin and all dependencies.
-    - if [[ $OSX   && $CLANG && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --with-icu --with-png --with-qrencode --build-icu --build-zlib --build-png --build-qrencode --build-boost --disable-shared --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
-    - if [[ $LINUX && $CLANG && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --with-icu --with-png --with-qrencode --build-icu --build-zlib --build-png --build-qrencode --build-boost --disable-shared --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Os' CXXFLAGS='-Os'; fi
-    - if [[ $LINUX && $GCC   && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --with-icu --with-png --with-qrencode --build-icu --build-zlib --build-png --build-qrencode --build-boost --disable-shared --build-dir=my-build --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Og -g --coverage' CXXFLAGS='-Og -g --coverage'; fi
-    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh ; fi
-    - if [[ $LINUX && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --with-icu --build-icu --build-boost --disable-ndebug --disable-static --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Os' CXXFLAGS='-Os'; fi
-    - if [[ $LINUX && $GCC   && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --disable-static --build-boost --prefix=$TRAVIS_BUILD_DIR/my-prefix CFLAGS='-Os -s' CXXFLAGS='-Os -s'; fi
-
-after_success:
-
-    # Install coveralls and current lcov.
-    - if [[ $LINUX && $GCC   && $STATIC  ]]; then gem install coveralls-lcov; fi
-
-    # Capture coverage info, filter out system and test code, and debug before upload.
-    - if [[ $LINUX && $GCC   && $STATIC  ]]; then lcov --directory . --capture --output-file coverage.info; fi
-    - if [[ $LINUX && $GCC   && $STATIC  ]]; then lcov --remove coverage.info "/usr/*" "$TRAVIS_BUILD_DIR/my-prefix/*" "my-build/*" "examples/*" "test/*" --output-file coverage.info; fi
-    - if [[ $LINUX && $GCC   && $STATIC  ]]; then lcov --list coverage.info; fi
-
-    # Upload coverage info to coveralls service (--repo-token <private coveralls repo token>).
-    - if [[ $LINUX && $GCC   && $STATIC  ]]; then coveralls-lcov coverage.info; fi
+  - make
+  - make test
