@@ -15,10 +15,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - cmake
-            - cmake-data
             - g++-5
             - libboost1.58-all-dev
-            - libsqlite3-dev
       env:
         - CMAKE_BUILD_TYPE=Debug
         - CMAKE_C_COMPILER=gcc-5
@@ -26,11 +24,8 @@ matrix:
 
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-      brew update;
-      brew install llvm37 sqlite3;
-      brew outdated boost || brew upgrade boost;
-    fi
+  - sudo apt-get update
+  - sudo apt-get install -y libboost1.58-all-dev g++-5 cmake 
 
 before_script:
   - mkdir build
@@ -39,4 +34,3 @@ before_script:
 
 script:
   - make
-  - make test
