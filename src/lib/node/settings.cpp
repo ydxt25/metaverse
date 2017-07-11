@@ -35,6 +35,7 @@ settings::settings()
 settings::settings(bc::settings context)
   : settings()
 {
+
 }
 
 } // namespace node
