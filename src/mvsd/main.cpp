@@ -76,4 +76,5 @@ int bc::main(int argc, char* argv[])
 	executor host(metadata, cin, *out, *err);
 	return host.menu() ? console_result::okay : console_result::failure;
 
+
 }
