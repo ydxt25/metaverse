@@ -1,35 +1,13 @@
 language: cpp
-
-sudo: required
-dist: trusty
-
-matrix:
-  include:
-    - os: linux
-      compiler: g++
-      addons:
-        apt:
-          sources:
-            - boost-latest
-            - travis-ci/sqlite3
-            - ubuntu-toolchain-r-test
-          packages:
-            - cmake
-      env:
-        - CMAKE_BUILD_TYPE=Debug
-        - CMAKE_C_COMPILER=gcc-5
-        - CMAKE_CXX_COMPILER=g++-5
-
+compiler: g++
 
 before_install:
-  - sudo sed -i 's/us-central1.gce/us-central1.gce.clouds/' /etc/apt/sources.list 
-  - sudo apt-get update
-  - sudo apt-get install -y libboost1.58-all-dev g++-5 cmake 
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+- sudo apt-get update -qq
 
-before_script:
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} ..
+install:
+- sudo apt-get install -qq g++-4.8
+- export CXX="g++-4.8"
 
-script:
-  - make
+
+
