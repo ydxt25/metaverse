@@ -6,8 +6,8 @@ before_install:
 - sudo apt-get update -qq
 
 install:
-- sudo apt-get install -qq g++-4.8
+- sudo apt-get install -qq g++-4.8 -y
 - export CXX="g++-4.8"
 
 
-script: "cd metaverse && mkdir build && cd build && cmake .. && make"
+script: "cd metaverse.git && mkdir build && cd build && cmake .. && make"
