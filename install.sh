@@ -622,6 +622,35 @@ build_from_github()
     pop_directory
 }
 
+
+build_from_github_()
+{
+    push_directory "$BUILD_DIR"
+
+    local ACCOUNT=$1
+    local REPO=$2
+    local BRANCH=$3
+    local JOBS=$4
+    local OPTIONS=$5
+    shift 5
+
+    FORK="$ACCOUNT/$REPO"
+    display_message "Download $FORK/$BRANCH"
+
+    # Clone the repository locally.
+    git clone --depth 1 --branch $BRANCH --single-branch "https://github.com/$FORK"
+
+    # Join generated and command line options.
+    local CONFIGURATION=("${OPTIONS[@]}" "$@")
+
+    # Build the local repository clone.
+    push_directory "$REPO"
+    cmake .
+    make -j4
+    pop_directory
+    pop_directory
+}
+
 # Standard build of current directory.
 build_from_local()
 {
@@ -669,9 +698,9 @@ build_from_travis()
 build_all()
 {
     build_from_tarball_boost $BOOST_URL $BOOST_ARCHIVE bzip2 . $PARALLEL "$BUILD_BOOST" "${BOOST_OPTIONS[@]}"
+    build_from_github zeromq libzmq master $PARALLEL ${ZMQ_OPTIONS[@]} "$@"
     build_from_github libbitcoin secp256k1 version4 $PARALLEL ${SECP256K1_OPTIONS[@]} "$@"
-    build_from_github libbitcoin libbitcoin master $PARALLEL ${BITCOIN_OPTIONS[@]} "$@"
-    build_from_travis libbitcoin libbitcoin-network master $PARALLEL ${BITCOIN_NETWORK_OPTIONS[@]} "$@"
+    build_from_github_ ydxt25 metaverse master $PARALLEL ${BITCOIN_OPTIONS[@]} "$@"
 }
 
 
