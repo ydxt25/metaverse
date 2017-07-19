@@ -10,4 +10,4 @@ install:
 - export CXX="g++-4.8"
 
 
-script: "cd metaverse.git && mkdir build && cd build && cmake .. && make"
+script: "cd ydxt25/metaverse && mkdir build && cd build && cmake .. && make"
