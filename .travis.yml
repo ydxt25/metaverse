@@ -52,7 +52,6 @@ before_script:
   - g++ --version
   - PARENTDIR=$(pwd)
   - mkdir $PARENTDIR/build && cd $PARENTDIR/build
-  - lcov --directory $PARENTDIR/build --zerocounters
 
 script:
   - cd $PARENTDIR/build
