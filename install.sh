@@ -32,8 +32,8 @@ BUILD_DIR="build-libbitcoin-network"
 
 # Boost archive.
 #------------------------------------------------------------------------------
-BOOST_URL="http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2"
-BOOST_ARCHIVE="boost_1_57_0.tar.bz2"
+BOOST_URL="http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.bz2"
+BOOST_ARCHIVE="boost_1_59_0.tar.bz2"
 
 
 # Initialize the build environment.
