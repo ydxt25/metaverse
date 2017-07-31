@@ -10,32 +10,10 @@ addons:
             - boost-latest
             - ubuntu-toolchain-r-test
         packages:
-            - g++-4.8
+            - g++-5.3
 
 matrix:
     include:
-        - os: osx
-          compiler: clang
-          env: LINK=dynamic
-        - os: osx
-          compiler: clang
-          env: LINK=static
-        - os: linux
-          compiler: clang
-          env: LINK=dynamic
-          apt:
-            sources:
-                - sourceline: 'ppa:h-rayflood/llvm'
-            packages:
-                - clang-3.4
-        - os: linux
-          compiler: clang
-          env: LINK=static
-          apt:
-            sources:
-                - sourceline: 'ppa:h-rayflood/llvm'
-            packages:
-                - clang-3.4
         - os: linux
           compiler: gcc
           env: LINK=dynamic
