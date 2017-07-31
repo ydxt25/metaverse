@@ -648,7 +648,7 @@ build_from_github_()
 
     # Build the local repository clone.
     push_directory "$REPO"
-    cmake .
+    cmake . -DCMAKE_INCLUDE_PATH=$PREFIX/include -DCMAKE_LIBRARY_PATH=$PREFIX/lib
     make -j4
     pop_directory
     pop_directory
